@@ -9,7 +9,6 @@ public class MoveBehavior : MonoBehaviour
     private Animator animator;
     public LayerMask groundLayer;
     public float speed;
-    public bool isFlip;
 
     private void Awake()
     {
@@ -21,10 +20,11 @@ public class MoveBehavior : MonoBehaviour
         animator.SetBool("isMoving", false);
     }
 
-    public void Setup(Animator animatorInstance, float speed)
+    public void Setup(float speed, int direction)
     {
-        animator = animatorInstance;
+        animator = GetComponent<Animator>();
         this.speed = speed;
+        transform.eulerAngles = direction > 0 ? Vector3.zero : new Vector3(0, 180, 0);
     }
 
     private void FixedUpdate()

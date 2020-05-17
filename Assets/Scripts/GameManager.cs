@@ -9,17 +9,18 @@ public class GameManager : MonoBehaviour
     public ChestSettingCollection chestSettingCollection;
     public LevelSettingCollection levelSettingCollection;
 
-    public CharacterManager playerPrefab;
-    public CharacterManager enemyPrefab;
+    public List<CharacterManager> allCharacterManages = new List<CharacterManager>();
     public ChestManager playerChestManager;
     public ChestManager enemyChestManager;
     public SummonManager summonManager;
+
+    private float curSummonPower;
 
     private void Start()
     {
         playerChestManager.Setup(chestSettingCollection.chestSettings[0]);
         enemyChestManager.Setup(chestSettingCollection.chestSettings[0]);
-        summonManager.Setup(GetCanSummonSetting());
+        summonManager.Setup(GetCanSummonSetting(), playerData.summonPower);
         StartCoroutine(GameLoop());
     }
 
@@ -40,10 +41,20 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Playing");
         summonManager.onSummonClick += OnSummonClick;
+        StartCoroutine(ProcessLevelLoop());
         while (playerChestManager.IsLive() && enemyChestManager.IsLive())
         {
             yield return null;
+            curSummonPower += Time.deltaTime;
+            curSummonPower = Mathf.Min(curSummonPower, playerData.summonPower);
+            summonManager.UpdateSummonPower(Mathf.RoundToInt(curSummonPower), playerData.summonPower);
+            for (int i = allCharacterManages.Count - 1; i >= 0; i--)
+            {
+                if (allCharacterManages[i].IsLive() == false)
+                    allCharacterManages.RemoveAt(i);
+            }
         }
+        StopCoroutine(ProcessLevelLoop());
         summonManager.onSummonClick -= OnSummonClick;
     }
 
@@ -54,10 +65,35 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
+    private IEnumerator ProcessLevelLoop()
+    {
+        var levelSetting = levelSettingCollection.levelSettings[0];
+        yield return new WaitForSeconds(levelSetting.startSpawnTime);
+        int totalWaveCount = levelSetting.waveCount;
+        while (totalWaveCount > 0)
+        {
+            int totalSpawnCount = levelSetting.spawnCount;
+            while (totalSpawnCount > 0)
+            {
+                int enemyIndex = Random.Range(0, levelSetting.enemyIDs.Length);
+                SpawnEnemyCharacter(levelSetting.enemyIDs[enemyIndex]);
+                yield return new WaitForSeconds(levelSetting.spawnInterval);
+                totalSpawnCount--;
+            }
+            totalWaveCount--;
+        }
+    }
+
     private void OnSummonClick(int id)
     {
-        SpawnCharacter(id);
-        summonManager.CooldownButton(id);
+        var characterSetting = characterSettingCollection.GetSetting(id);
+        if (curSummonPower >= characterSetting.summonCost)
+        {
+            curSummonPower -= characterSetting.summonCost;
+            SpawnPlayerCharacter(id);
+            summonManager.CooldownButton(id);
+            summonManager.UpdateSummonPower(Mathf.RoundToInt(curSummonPower), playerData.summonPower);
+        }
     }
 
     private CharacterSetting[] GetCanSummonSetting()
@@ -70,18 +106,25 @@ public class GameManager : MonoBehaviour
         return characterSettings;
     }
 
-    private void SpawnCharacter(int id)
+    private void SpawnPlayerCharacter(int id)
     {
-        var instance = Instantiate(playerPrefab);
-        instance.transform.position = playerChestManager.spawnPoint.position;
         var setting = characterSettingCollection.GetSetting(id);
-        instance.Setup(setting);
+        var manager = new CharacterManager();
+        allCharacterManages.Add(manager);
+        manager.Setup(setting, LayerMask.NameToLayer("Player"), playerChestManager.spawnPoint.position, 1);
+    }
+
+    private void SpawnEnemyCharacter(int id)
+    {
+        var setting = characterSettingCollection.GetSetting(id);
+        var manager = new CharacterManager();
+        allCharacterManages.Add(manager);
+        manager.Setup(setting, LayerMask.NameToLayer("Enemy"), enemyChestManager.spawnPoint.position, -1);
     }
 
     private void DisableAllCharacter()
     {
-        var allCharacters = FindObjectsOfType<CharacterManager>();
-        foreach (var character in allCharacters)
+        foreach (var character in allCharacterManages)
         {
             character.Disable();
         }

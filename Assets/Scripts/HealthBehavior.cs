@@ -8,10 +8,11 @@ public class HealthBehavior : MonoBehaviour
     public Slider healthBar;
     private int currentHP;
     private Animator animator;
+    private bool isDead;
 
-    public void Setup(Animator animatorInstance, int hp)
+    public void Setup(int hp)
     {
-        animator = animatorInstance;
+        animator = GetComponent<Animator>();
         currentHP = hp;
         healthBar.maxValue = currentHP;
         healthBar.value = currentHP;
@@ -23,10 +24,18 @@ public class HealthBehavior : MonoBehaviour
         currentHP -= damage;
         healthBar.value = currentHP;
         animator.SetTrigger("hit");
-        if(currentHP <= 0)
+        if (currentHP <= 0)
         {
+            isDead = true;
             healthBar.gameObject.SetActive(false);
             animator.SetTrigger("dead");
+            GetComponent<Collider2D>().enabled = false;
+            Destroy(gameObject, 3);
         }
+    }
+
+    public bool IsLive()
+    {
+        return !isDead;
     }
 }

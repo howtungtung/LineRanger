@@ -19,14 +19,14 @@ MonoBehaviour:
     speed: 1
     attack: 10
     hp: 100
-    summonCost: 20
+    summonCost: 2
   - name: "\u523A\u5BA22"
     id: 1
     prefab: {fileID: 1000013301305156, guid: 7ac6bdc2e4b5e47468b8b460ca863a5f, type: 3}
     speed: 1
-    attack: 10
+    attack: 2
     hp: 100
-    summonCost: 20
+    summonCost: 5
   - name: "\u523A\u5BA23"
     id: 2
     prefab: {fileID: 1000013234968400, guid: 4a6e9a7d544412d4d92db88d8587228e, type: 3}
@@ -54,4 +54,4 @@ MonoBehaviour:
     speed: 2
     attack: 15
     hp: 200
-    summonCost: 100
+    summonCost: 5

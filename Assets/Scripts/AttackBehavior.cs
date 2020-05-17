@@ -11,12 +11,11 @@ public class AttackBehavior : MonoBehaviour
     public LayerMask attackMask;
     private Animator animator;
 
-    public void Setup(Animator animatorInstance, int attack)
+    public void Setup(int attack, int layerID)
     {
-        animator = animatorInstance;
+        animator = GetComponent<Animator>();
         this.attack = attack;
-        var listener = animator.GetComponent<AnimationEventListener>();
-        listener.onEventTrigger += OnAnimationEventTrigger;
+        attackMask = LayerMask.GetMask(LayerMask.LayerToName(layerID));
     }
 
     private void OnDisable()
@@ -57,16 +56,5 @@ public class AttackBehavior : MonoBehaviour
         pos += transform.up * attackOffset.y;
         Gizmos.DrawWireSphere(pos, attackRadius);
         Debug.DrawRay(transform.position + new Vector3(0, 0.5f), transform.right * detectDistance, Color.red);
-    }
-
-
-    public void OnAnimationEventTrigger(string evt)
-    {
-        switch (evt)
-        {
-            case "attack":
-                OnAttackEventTrigger();
-                break;
-        }
     }
 }

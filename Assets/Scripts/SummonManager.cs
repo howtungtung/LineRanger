@@ -9,10 +9,12 @@ public class SummonManager : MonoBehaviour
     public Text summonPowerText;
     public event Action<int> onSummonClick;
     public float cooldownTime;
+    private string summonTextFormat;
 
     private void Awake()
     {
         summonButtons = GetComponentsInChildren<SummonButton>();
+        summonTextFormat = summonPowerText.text;
     }
 
     public void OnSummonClick(SummonButton summonButton)
@@ -20,7 +22,7 @@ public class SummonManager : MonoBehaviour
         onSummonClick?.Invoke(summonButton.summonID);
     }
 
-    public void Setup(CharacterSetting[] characterSettings)
+    public void Setup(CharacterSetting[] characterSettings, int maxSummonPower)
     {
         for (int i = 0; i < summonButtons.Length; i++)
         {
@@ -33,6 +35,7 @@ public class SummonManager : MonoBehaviour
                 summonButtons[i].gameObject.SetActive(false);
             }
         }
+        UpdateSummonPower(0, maxSummonPower);
     }
 
     public void CooldownButton(int id)
@@ -41,8 +44,8 @@ public class SummonManager : MonoBehaviour
         button.SetCooldown(cooldownTime);
     }
 
-    public void UpdateSummonPower()
+    public void UpdateSummonPower(int curSummonPower, int maxSummonPower)
     {
-
+        summonPowerText.text = string.Format(summonTextFormat, curSummonPower, maxSummonPower);
     }
 }

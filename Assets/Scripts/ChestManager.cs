@@ -21,7 +21,7 @@ public class ChestManager : MonoBehaviour
         var chestInstance = Instantiate(chestSetting.cheshPrefab, transform);
         chestInstance.transform.localPosition = Vector3.zero;
         animatorInstance = chestInstance.GetComponent<Animator>();
-        healthBehavior.Setup(animatorInstance, chestSetting.hp);
+        healthBehavior.Setup(chestSetting.hp);
         maxSummonPower = chestSetting.summonPower;
         curSummonPower = 0;
         StartCoroutine(ProcessLifeCycle());

@@ -1,47 +1,30 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Rendering;
 
-public class CharacterManager : MonoBehaviour
+public class CharacterManager
 {
     private MoveBehavior moveBehavior;
     private HealthBehavior healthBehavior;
     private AttackBehavior attackBehavior;
-    private Animator animatorInstance;
+    private GameObject characterInstance;
 
-    private void Awake()
+    public void Setup(CharacterSetting characterSetting, int layerID, Vector2 spawnPos, int direction)
     {
-        moveBehavior = GetComponent<MoveBehavior>();
-        healthBehavior = GetComponent<HealthBehavior>();
-        attackBehavior = GetComponent<AttackBehavior>();
-    }
-
-    public void Setup(CharacterSetting characterSetting)
-    {
-        var characterInstance = Instantiate(characterSetting.prefab, transform);
+        characterInstance = GameObject.Instantiate(characterSetting.prefab, spawnPos, Quaternion.identity);
+        characterInstance.gameObject.layer = layerID;
+        characterInstance.GetComponent<SortingGroup>().sortingLayerID = layerID;
         characterInstance.transform.localPosition = Vector3.zero;
-        animatorInstance = characterInstance.GetComponent<Animator>();
-        moveBehavior.Setup(animatorInstance, characterSetting.speed);
-        healthBehavior.Setup(animatorInstance, characterSetting.hp);
-        attackBehavior.Setup(animatorInstance, characterSetting.attack);
-        StartCoroutine(ProcessLifeCycle());
-    }
-
-    private IEnumerator ProcessLifeCycle()
-    {
-        while (IsLive())
-        {
-            yield return null;
-        }
-        GetComponent<Collider2D>().enabled = false;
-        yield return new WaitForSeconds(3f);
-        Destroy(gameObject);
+        moveBehavior = characterInstance.GetComponent<MoveBehavior>();
+        healthBehavior = characterInstance.GetComponent<HealthBehavior>();
+        attackBehavior = characterInstance.GetComponent<AttackBehavior>();
+        moveBehavior.Setup(characterSetting.speed, direction);
+        healthBehavior.Setup(characterSetting.hp);
+        attackBehavior.Setup(characterSetting.attack, layerID);
     }
 
     public bool IsLive()
     {
-        return !animatorInstance.GetCurrentAnimatorStateInfo(0).IsName("Death");
+        return healthBehavior.IsLive();
     }
 
     public void Disable()
