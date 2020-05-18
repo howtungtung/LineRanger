@@ -14,8 +14,6 @@ public class GameManager : MonoBehaviour
     public ChestManager enemyChestManager;
     public SummonManager summonManager;
 
-    private float curSummonPower;
-
     private void Start()
     {
         playerChestManager.Setup(chestSettingCollection.chestSettings[0]);
@@ -41,20 +39,17 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Playing");
         summonManager.onSummonClick += OnSummonClick;
-        StartCoroutine(ProcessLevelLoop());
+        StartCoroutine("ProcessLevelLoop");
         while (playerChestManager.IsLive() && enemyChestManager.IsLive())
         {
             yield return null;
-            curSummonPower += Time.deltaTime;
-            curSummonPower = Mathf.Min(curSummonPower, playerData.summonPower);
-            summonManager.UpdateSummonPower(Mathf.RoundToInt(curSummonPower), playerData.summonPower);
             for (int i = allCharacterManages.Count - 1; i >= 0; i--)
             {
                 if (allCharacterManages[i].IsLive() == false)
                     allCharacterManages.RemoveAt(i);
             }
         }
-        StopCoroutine(ProcessLevelLoop());
+        StopCoroutine("ProcessLevelLoop");
         summonManager.onSummonClick -= OnSummonClick;
     }
 
@@ -81,19 +76,14 @@ public class GameManager : MonoBehaviour
                 totalSpawnCount--;
             }
             totalWaveCount--;
+            yield return new WaitForSeconds(levelSetting.waveInterval);
         }
     }
 
     private void OnSummonClick(int id)
     {
         var characterSetting = characterSettingCollection.GetSetting(id);
-        if (curSummonPower >= characterSetting.summonCost)
-        {
-            curSummonPower -= characterSetting.summonCost;
-            SpawnPlayerCharacter(id);
-            summonManager.CooldownButton(id);
-            summonManager.UpdateSummonPower(Mathf.RoundToInt(curSummonPower), playerData.summonPower);
-        }
+        SpawnPlayerCharacter(id);
     }
 
     private CharacterSetting[] GetCanSummonSetting()
@@ -111,7 +101,7 @@ public class GameManager : MonoBehaviour
         var setting = characterSettingCollection.GetSetting(id);
         var manager = new CharacterManager();
         allCharacterManages.Add(manager);
-        manager.Setup(setting, LayerMask.NameToLayer("Player"), playerChestManager.spawnPoint.position, 1);
+        manager.Setup(setting, CharacterType.PLAYER, playerChestManager.spawnPoint.position, 1);
     }
 
     private void SpawnEnemyCharacter(int id)
@@ -119,7 +109,7 @@ public class GameManager : MonoBehaviour
         var setting = characterSettingCollection.GetSetting(id);
         var manager = new CharacterManager();
         allCharacterManages.Add(manager);
-        manager.Setup(setting, LayerMask.NameToLayer("Enemy"), enemyChestManager.spawnPoint.position, -1);
+        manager.Setup(setting, CharacterType.ENEMY, enemyChestManager.spawnPoint.position, -1);
     }
 
     private void DisableAllCharacter()

@@ -11,4 +11,5 @@ public class LevelSetting
     public int waveCount;
     public int spawnCount;
     public float spawnInterval;
+    public float waveInterval;
 }

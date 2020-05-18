@@ -8,6 +8,7 @@ public class AttackBehavior : MonoBehaviour
     public Vector2 attackOffset = new Vector2(0.5f, 0.5f);
     public int attack = 1;
     public float attackRadius = 1;
+    public bool isAOE;
     public LayerMask attackMask;
     private Animator animator;
 
@@ -36,16 +37,30 @@ public class AttackBehavior : MonoBehaviour
         }
     }
 
-    public void OnAttackEventTrigger()
+    public virtual void OnAttackEventTrigger()
     {
         Vector3 pos = transform.position;
         pos += transform.right * attackOffset.x;
         pos += transform.up * attackOffset.y;
-        var hits = Physics2D.OverlapCircleAll(pos, attackRadius, attackMask);
-        foreach(var hit in hits)
+        if (isAOE)
         {
-            var healthBehavior = hit.GetComponent<HealthBehavior>();
-            healthBehavior.TakeDamage(attack);
+            var hits = Physics2D.OverlapCircleAll(pos, attackRadius, attackMask);
+            foreach (var hit in hits)
+            {
+                var healthBehavior = hit.GetComponent<HealthBehavior>();
+                if(healthBehavior)
+                    healthBehavior.TakeDamage(attack);
+            }
+        }
+        else
+        {
+            var hit = Physics2D.OverlapCircle(pos, attackRadius, attackMask);
+            if(hit != null)
+            {
+                var healthBehavior = hit.GetComponent<HealthBehavior>();
+                if (healthBehavior)
+                    healthBehavior.TakeDamage(attack);
+            }
         }
     }
 

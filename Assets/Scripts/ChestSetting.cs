@@ -6,5 +6,4 @@ public class ChestSetting
 {
     public GameObject cheshPrefab;
     public int hp;
-    public int summonPower;
 }

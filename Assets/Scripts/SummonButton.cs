@@ -7,13 +7,15 @@ public class SummonButton : MonoBehaviour
 {
     public Text label;
     public int summonID;
+    public int summonCost;
     public Image cooldownMask;
     public Button button;
 
-    public void Setup(int id, string name)
+    public void Setup(int id, string name, int summonCost)
     {
         summonID = id;
         label.text = name;
+        this.summonCost = summonCost;
     }
 
     public void SetCooldown(float cooldownTime)

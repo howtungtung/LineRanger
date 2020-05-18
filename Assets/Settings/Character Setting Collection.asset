@@ -15,42 +15,47 @@ MonoBehaviour:
   characterSettings:
   - name: "\u523A\u5BA21"
     id: 0
-    prefab: {fileID: 267258871828314806, guid: 6834e74b92c7741c3b545807afa0d265, type: 3}
+    prefab: {fileID: 3034477070696779332, guid: 6834e74b92c7741c3b545807afa0d265,
+      type: 3}
     speed: 1
     attack: 10
     hp: 100
     summonCost: 2
   - name: "\u523A\u5BA22"
     id: 1
-    prefab: {fileID: 1000013301305156, guid: 7ac6bdc2e4b5e47468b8b460ca863a5f, type: 3}
+    prefab: {fileID: 3846482272275421231, guid: 7ac6bdc2e4b5e47468b8b460ca863a5f,
+      type: 3}
     speed: 1
     attack: 2
     hp: 100
     summonCost: 5
   - name: "\u523A\u5BA23"
     id: 2
-    prefab: {fileID: 1000013234968400, guid: 4a6e9a7d544412d4d92db88d8587228e, type: 3}
+    prefab: {fileID: 6888223719571567292, guid: 4a6e9a7d544412d4d92db88d8587228e,
+      type: 3}
     speed: 1
     attack: 10
     hp: 100
     summonCost: 20
   - name: "\u523A\u5BA24"
     id: 3
-    prefab: {fileID: 1000011922212602, guid: b3d1057caadaef44ab620edfef78b14f, type: 3}
+    prefab: {fileID: 6884944775038274811, guid: b3d1057caadaef44ab620edfef78b14f,
+      type: 3}
     speed: 1
     attack: 10
     hp: 100
     summonCost: 20
-  - name: "\u6D6A\u4EBA"
+  - name: "\u5FCD\u8005"
     id: 4
-    prefab: {fileID: 1000013304306144, guid: 30ef59945f2a7ea499bbbe10a7d48f1a, type: 3}
+    prefab: {fileID: 2468151273868440671, guid: 04300a90533f6424f97a539a1ebb81cd,
+      type: 3}
     speed: 1
     attack: 10
     hp: 100
     summonCost: 0
   - name: "\u6697\u6BBA\u8005"
     id: 5
-    prefab: {fileID: 1000011821036864, guid: 5b210609803658e488f512fc13a6163e, type: 3}
+    prefab: {fileID: 578877571124347628, guid: 947021d387494924f904f3dee0563bd6, type: 3}
     speed: 2
     attack: 15
     hp: 200

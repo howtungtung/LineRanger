@@ -19,3 +19,4 @@ MonoBehaviour:
     waveCount: 3
     spawnCount: 3
     spawnInterval: 1
+    waveInterval: 3
